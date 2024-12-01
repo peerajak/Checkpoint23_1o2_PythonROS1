@@ -34,6 +34,7 @@ class WaypointActionClass(object):
     _dist_precision = 0.05
  
     def __init__(self):
+        rospy.init_node('robot_control_node', anonymous=True)
         # creates the action server
         self._as = actionlib.SimpleActionServer("tortoisebot_as", WaypointActionAction, self.goal_callback, False)
         self._as.start()
@@ -121,6 +122,18 @@ class WaypointActionClass(object):
         if success:
             self._result.success = True
             self._as.set_succeeded(self._result)
+
+    def shutdownhook(self):
+        # works better than the rospy.is_shutdown()
+        self.stop_robot()
+        self.ctrl_c = True
+    
+    def stop_robot(self):
+        #rospy.loginfo("shutdown time! Stop the robot")
+        twist_msg = Twist()
+        twist_msg.linear.x = 0
+        twist_msg.angular.z = 0
+        self._pub_cmd_vel.publish(twist_msg)
  
 if __name__ == '__main__':
     rospy.init_node('tortoisebot_as')
