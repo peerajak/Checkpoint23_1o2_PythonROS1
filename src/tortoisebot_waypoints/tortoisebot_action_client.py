@@ -3,12 +3,13 @@ import rospy
 import time
 import actionlib
  
-from course_web_dev_ros.msg import WaypointActionFeedback, WaypointActionResult, WaypointActionAction,WaypointActionGoal
+from tortoisebot_waypoints.msg import WaypointActionFeedback, WaypointActionResult, WaypointActionAction,WaypointActionGoal
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist, Point
 from nav_msgs.msg import Odometry
 from tf import transformations
+import random
 import math
 waypoints = [
 { 'x' : 0.7, 'y':-0.48},                                #1
@@ -33,8 +34,9 @@ def call_server():
     client = actionlib.SimpleActionClient('tortoisebot_as', WaypointActionAction)
     client.wait_for_server()
     goal = WaypointActionGoal()
-    goal.position.x = waypoints[3].get('x')
-    goal.position.y = waypoints[3].get('y')
+    waypoint_index = random.randint(0, 8)
+    goal.position.x = waypoints[waypoint_index].get('x')
+    goal.position.y = waypoints[waypoint_index].get('y')
 
     client.send_goal(goal, done_cb = done_cb, feedback_cb=feedback_cb )
 

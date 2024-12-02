@@ -3,7 +3,7 @@ import rospy
 import time
 import actionlib
  
-from course_web_dev_ros.msg import WaypointActionFeedback, WaypointActionResult, WaypointActionAction
+from tortoisebot_waypoints.msg import WaypointActionFeedback, WaypointActionResult, WaypointActionAction
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist, Point
@@ -34,13 +34,14 @@ class WaypointActionClass(object):
     _dist_precision = 0.05
  
     def __init__(self):
-        rospy.init_node('robot_control_node', anonymous=True)
+        #rospy.init_node('robot_control_node', anonymous=True)
         # creates the action server
         self._as = actionlib.SimpleActionServer("tortoisebot_as", WaypointActionAction, self.goal_callback, False)
         self._as.start()
- 
+        self._des_yaw = 0
         # define a loop rate
         self._rate = rospy.Rate(25)
+        self.timeout = 250 #timeout/rate seconds. in this case Rate=25,timeout 250, therefore 10 secs
  
         # topics
         self._pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -69,11 +70,14 @@ class WaypointActionClass(object):
         # define desired position and errors
         self._des_pos = goal.position
         desired_yaw = math.atan2(self._des_pos.y - self._position.y, self._des_pos.x - self._position.x)
+        self._des_yaw = desired_yaw 
         err_pos = math.sqrt(pow(self._des_pos.y - self._position.y, 2) + pow(self._des_pos.x - self._position.x, 2))
         err_yaw = desired_yaw - self._yaw
  
         # perform task
-        while err_pos > self._dist_precision and success:
+        iter = 0
+        while err_pos > self._dist_precision and success and iter<self.timeout:
+            iter += 1
             # update vars
             desired_yaw = math.atan2(self._des_pos.y - self._position.y, self._des_pos.x - self._position.x)
             err_yaw = desired_yaw - self._yaw
@@ -119,6 +123,10 @@ class WaypointActionClass(object):
         self._pub_cmd_vel.publish(twist_msg)
  
         # return success
+        if iter >= self.timeout:
+            rospy.loginfo("Timeout")
+            success = False
+
         if success:
             self._result.success = True
             self._as.set_succeeded(self._result)
@@ -138,4 +146,4 @@ class WaypointActionClass(object):
 if __name__ == '__main__':
     rospy.init_node('tortoisebot_as')
     WaypointActionClass()
-    rospy.spin()
+    #rospy.spin()

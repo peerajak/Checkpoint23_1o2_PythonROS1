@@ -17,8 +17,19 @@ rosrun tortoisebot_waypoints tortoisebot_action_server.py
 
 Terminal 3
 
+Test with normal tortoisebot_action_client
+
 ```
 source ~/simulation_ws/devel/setup.bash
 rosrun tortoisebot_waypoints tortoisebot_action_client.py
 ```
+
+Test with Unit test 
+
+```
+source ~/simulation_ws/devel/setup.bash
+rosrun tortoisebot_waypoints waypoints_test.py
+```
+
+
 
