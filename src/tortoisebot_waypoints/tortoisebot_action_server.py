@@ -41,7 +41,7 @@ class WaypointActionClass(object):
         self._des_yaw = 0
         # define a loop rate
         self._rate = rospy.Rate(25)
-        self.timeout = 250 #timeout/rate seconds. in this case Rate=25,timeout 250, therefore 10 secs
+        self.timeout = 500 #timeout/rate seconds. in this case Rate=25,timeout 500, therefore 20 secs
  
         # topics
         self._pub_cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
