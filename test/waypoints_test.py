@@ -29,9 +29,9 @@ waypoints = [
 
 class TestTortoisebotWaypoints(unittest.TestCase):
 
-    tolerance_pos = 0.5
+    tolerance_pos = 0.1
     tolerance_yaw = 0.5
-    test_sequence = [1,5,2] #[1,5,2,5,8,5,9]
+    test_sequence = [3,4,5]#[1,5,2] #[1,5,2,5,8,5,9]
 
     def setUp(self):
         self.rc = WaypointActionClass()

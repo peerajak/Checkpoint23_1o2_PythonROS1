@@ -31,5 +31,20 @@ source ~/simulation_ws/devel/setup.bash
 rosrun tortoisebot_waypoints waypoints_test.py
 ```
 
+## Using Rostest
+
+Terminal 1
+
+```
+source ~/simulation_ws/devel/setup.bash
+roslaunch tortoisebot_gazebo tortoisebot_playground.launch
+```
+Terminal 2
+
+```
+source ~/simulation_ws/devel/setup.bash
+rostest tortoisebot_waypoints waypoints_test.test --reuse-master
+```
+
 
 
