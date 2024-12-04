@@ -46,10 +46,7 @@ class TestTortoisebotWaypoints(unittest.TestCase):
 
     # only functions with 'test_'-prefix will be run!
     def test_goal_reached(self):
-        # step 1. get current position, and yaw
-        self.start_position = self.rc._position
-        self.start_yaw = self.rc._yaw
-        # step 2. call action server with a list of test params
+
         self.client = actionlib.SimpleActionClient('tortoisebot_as', WaypointActionAction)
         self.client.wait_for_server()
         goal = WaypointActionGoal()
@@ -60,6 +57,9 @@ class TestTortoisebotWaypoints(unittest.TestCase):
             goal.position.y = waypoints[waypoint_index].get('y')
             self.goal_x = goal.position.x 
             self.goal_y = goal.position.y 
+            self.start_position = self.rc._position
+            self.start_yaw = self.rc._yaw
+            self.desired_yaw = math.atan2(self.goal_y -self.start_position.y, self.goal_x - self.start_position.x)
             self.client.send_goal(goal, done_cb = self.done_cb, feedback_cb=self.feedback_cb )
             self.client.wait_for_result()
             result = self.client.get_result()
@@ -71,7 +71,7 @@ class TestTortoisebotWaypoints(unittest.TestCase):
             rospy.loginfo('goal ({},{}, yaw {})  end position ({},{}, yaw {})'.format(self.goal_x, self.goal_y, self.rc._des_yaw,self.end_position.x,self.end_position.y,self.end_yaw))        
             self.assertTrue(abs(self.goal_x - self.end_position.x) <= self.tolerance_pos, "Error X Position not in acceptable range")
             self.assertTrue(abs(self.goal_y - self.end_position.y) <= self.tolerance_pos, "Error Y Position not in acceptable range")       
-            self.assertTrue(abs(self.rc._des_yaw - self.end_yaw) <= self.tolerance_yaw, "Error Yaw angle not in acceptable range")
+            self.assertTrue(abs(self.desired_yaw - self.end_yaw) <= self.tolerance_yaw, "Error Yaw angle not in acceptable range")
         #self.rc.shutdownhook()
         rospy.signal_shutdown('finished')
 
