@@ -16,6 +16,8 @@ from time import sleep
 PKG = 'tortoisebot_waypoints'
 NAME = 'tortoisebot_waypoints_test'
 
+MAKE_TEST_PASS=True
+
 waypoints = [
 { 'x' : 2.7, 'y':-0.48},                                #1
 { 'x' : 0.680851835461391, 'y':0.5046365559674899},     #2 
@@ -40,6 +42,8 @@ class TestTortoisebotWaypoints(unittest.TestCase):
     def setUp(self):
         self._sub_odom = rospy.Subscriber('/odom', Odometry, self._clbk_odom)
 
+
+
     def _clbk_odom(self, msg):
         # position
         self._position = msg.pose.pose.position
@@ -62,13 +66,16 @@ class TestTortoisebotWaypoints(unittest.TestCase):
 
     # only functions with 'test_'-prefix will be run!
     def test_goal_reached(self):
-
+        sleep(3) #Make sure that gazebo, odom has started
         self.client = actionlib.SimpleActionClient('tortoisebot_as', WaypointActionAction)
         self.client.wait_for_server()
 
 
         # for waypoint_index_plus_one in self.test_sequence: 
-        waypoint_index_plus_one = 9  # 9 is for passed ,# 1 for failed
+        if MAKE_TEST_PASS:
+            waypoint_index_plus_one = 9  # 9 is for passed ,# 1 for failed
+        else:
+            waypoint_index_plus_one = 1  # 9 is for passed ,# 1 for failed
         waypoint_index = waypoint_index_plus_one - 1
         goal = WaypointActionGoal()
         goal.position.x = waypoints[waypoint_index].get('x')

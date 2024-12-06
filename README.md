@@ -14,6 +14,10 @@ source ~/simulation_ws/devel/setup.bash
 rostest tortoisebot_waypoints waypoints_test.test --reuse-master
 ```
 
+if you want to test passes, file waypoints_test.py, set MAKE_TEST_PASS=True.
+
+if you want to test fails, file waypoints_test.py, set MAKE_TEST_PASS=False.
+
 ## Manual Testing
 
 Terminal 1
