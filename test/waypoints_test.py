@@ -41,6 +41,7 @@ class TestTortoisebotWaypoints(unittest.TestCase):
     #test_sequence = [3,4,5]#[1,5,2] #[1,5,2,5,8,5,9]
     def setUp(self):
         self._sub_odom = rospy.Subscriber('/odom', Odometry, self._clbk_odom)
+        self._position = None
 
 
 
@@ -82,6 +83,8 @@ class TestTortoisebotWaypoints(unittest.TestCase):
         goal.position.y = waypoints[waypoint_index].get('y')
         self.goal_x = goal.position.x 
         self.goal_y = goal.position.y 
+        while self._position is None:
+            sleep(1)
         self.start_position = self._position
         self.start_yaw = self._yaw 
         self.desired_yaw = math.atan2(self.goal_y -self.start_position.y, self.goal_x - self.start_position.x)
